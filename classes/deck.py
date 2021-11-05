@@ -21,7 +21,7 @@ class Deck(DeckABC):
     def inc_round(self):
         self.round += 1
 
-    # Distributes cards randomly between the players (shuffles and distributes)
+    # Distributes cards randomly between the players (shuffles and distributes) (Builder design pattern)
     def distribute(self, player_one, player_two):
         shuffle(self.deck_of_cards)  # shuffle cards once
         shuffle(self.deck_of_cards)  # shuffle cards twice - Increase random distribution probability and variance
@@ -31,7 +31,7 @@ class Deck(DeckABC):
             player_two.add_cards([self.deck_of_cards.pop()])
         return self
 
-    # Create card instances and adds it to the deck_of_cards array
+    # Create card instances and adds it to the deck_of_cards array (Builder design pattern)
     def build_deck(self):
         for suit in SuitEnum:
             for card in CardEnum:
