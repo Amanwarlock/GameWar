@@ -18,13 +18,18 @@ class Player(PlayerABC):
         return self.name
 
     def add_cards(self, card_list):
-        pass
+        while len(card_list) > 0:
+            self.hand.enqueue(card_list.pop(0))
 
     def draw_one(self):
-        pass
+        return self.hand.dequeue()
 
     def draw_many(self, count=1):
-        pass
+        cards = []
+        while count > 0:
+            cards.append(self.hand.dequeue())
+            count -= 1
+        return cards
 
     def player_cards_count(self):
-        pass
+        return self.hand.size()

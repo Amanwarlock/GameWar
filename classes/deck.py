@@ -1,4 +1,8 @@
 from interfaces.deck_abc import DeckABC
+from enums.suits_enum import SuitEnum
+from enums.card_enum import CardEnum
+from classes.card import Card
+from random import shuffle
 """
 Deck class implementing the abstract class DeckABC
 """
@@ -19,8 +23,18 @@ class Deck(DeckABC):
 
     # Distributes cards randomly between the players (shuffles and distributes)
     def distribute(self, player_one, player_two):
-        pass
+        shuffle(self.deck_of_cards)  # shuffle cards once
+        shuffle(self.deck_of_cards)  # shuffle cards twice - Increase random distribution probability and variance
+        mid = len(self.deck_of_cards) // 2
+        for i in range(mid):
+            player_one.add_cards([self.deck_of_cards.pop()])
+            player_two.add_cards([self.deck_of_cards.pop()])
+        return self
 
     # Create card instances and adds it to the deck_of_cards array
     def build_deck(self):
-        pass
+        for suit in SuitEnum:
+            for card in CardEnum:
+                new_card = Card(suit, card)
+                self.deck_of_cards.append(new_card)
+        return self
