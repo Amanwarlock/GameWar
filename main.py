@@ -94,62 +94,67 @@ class Main:
                 self.player_two.add_cards([player_two_card, player_one_card])
                 Notifier.notify_round_winner(self.TITLE_PLAYER_TWO, self.deck.round, self.player_two, self.player_one)
             else:
-                Notifier.declare_war()
-                self.is_war = True
+                self.is_game_on = self.on_war(player_one_card, player_two_card)
 
-                while self.is_war:
+    def on_war(self, player_one_card, player_two_card):
+        self.is_war = True
 
-                    self.track_wars()
+        while self.is_war:
 
-                    if self.player_one.player_cards_count() < 4:
-                        Notifier.notify_game_winner(self.TITLE_PLAYER_TWO, self.player_two)
-                        self.winner = self.player_two
-                        self.is_war = False
-                        self.is_game_on = False
-                        break
+            Notifier.declare_war()
+            self.track_wars()
 
-                    if self.player_two.player_cards_count() < 4:
-                        Notifier.notify_game_winner(self.TITLE_PLAYER_ONE, self.player_one)
-                        self.winner = self.player_one
-                        self.is_war = False
-                        self.is_game_on = False
-                        break
+            if self.player_one.player_cards_count() < 4:
+                Notifier.notify_game_winner(self.TITLE_PLAYER_TWO, self.player_two)
+                self.winner = self.player_two
+                self.is_war = False
+                return False
 
-                    player_one_card_pool = [player_one_card]
-                    player_two_card_pool = [player_two_card]
-                    player_one_card_pool.extend(self.player_one.draw_many(3))
-                    Notifier.fire(f'{self.player_one.get_player_name()} drew three cards face-down')
-                    player_two_card_pool.extend(self.player_two.draw_many(3))
-                    Notifier.fire(f'{self.player_two.get_player_name()} drew three cards face-down')
+            if self.player_two.player_cards_count() < 4:
+                Notifier.notify_game_winner(self.TITLE_PLAYER_ONE, self.player_one)
+                self.winner = self.player_one
+                self.is_war = False
+                return False
 
-                    player_one_card = self.player_one.draw_one()
-                    Notifier.fire(
-                        f'Player-1: {self.player_one.get_player_name()} drew one card face-up {player_one_card.show()}')
-                    player_two_card = self.player_two.draw_one()
-                    Notifier.fire(
-                        f'Player-2: {self.player_two.get_player_name()} drew one card face-up {player_two_card.show()}')
+            player_one_card_pool = [player_one_card]
+            player_two_card_pool = [player_two_card]
 
-                    result = player_one_card.compare(player_two_card)
+            player_one_card_pool.extend(self.player_one.draw_many(3))
+            Notifier.fire(f'{self.player_one.get_player_name()} drew three cards face-down')
 
-                    if result == 1:
-                        player_one_card_pool.append(player_one_card)
-                        player_two_card_pool.append(player_two_card)
-                        player_one_card_pool.extend(player_two_card_pool)
-                        self.player_one.add_cards(player_one_card_pool)
-                        self.is_war = False
-                        Notifier.notify_round_winner(self.TITLE_PLAYER_ONE, self.deck.round, self.player_one,
-                                                     self.player_two)
-                    elif result == -1:
-                        player_one_card_pool.append(player_one_card)
-                        player_two_card_pool.append(player_two_card)
-                        player_two_card_pool.extend(player_one_card_pool)
-                        self.player_two.add_cards(player_two_card_pool)
-                        self.is_war = False
-                        Notifier.notify_round_winner(self.TITLE_PLAYER_TWO, self.deck.round, self.player_two,
-                                                     self.player_one)
-                    else:
-                        Notifier.declare_war()
-                        self.is_war = True
+            player_two_card_pool.extend(self.player_two.draw_many(3))
+            Notifier.fire(f'{self.player_two.get_player_name()} drew three cards face-down')
+
+            player_one_card = self.player_one.draw_one()
+            Notifier.fire(
+                f'Player-1: {self.player_one.get_player_name()} drew one card face-up {player_one_card.show()}')
+
+            player_two_card = self.player_two.draw_one()
+            Notifier.fire(
+                f'Player-2: {self.player_two.get_player_name()} drew one card face-up {player_two_card.show()}')
+
+            result = player_one_card.compare(player_two_card)
+
+            if result == 1:
+                player_one_card_pool.append(player_one_card)
+                player_two_card_pool.append(player_two_card)
+                player_one_card_pool.extend(player_two_card_pool)
+                self.player_one.add_cards(player_one_card_pool)
+                self.is_war = False
+                Notifier.notify_round_winner(self.TITLE_PLAYER_ONE, self.deck.round, self.player_one,
+                                             self.player_two)
+            elif result == -1:
+                player_one_card_pool.append(player_one_card)
+                player_two_card_pool.append(player_two_card)
+                player_two_card_pool.extend(player_one_card_pool)
+                self.player_two.add_cards(player_two_card_pool)
+                self.is_war = False
+                Notifier.notify_round_winner(self.TITLE_PLAYER_TWO, self.deck.round, self.player_two,
+                                             self.player_one)
+            else:
+                continue
+
+        return True
 
 
 if __name__ == '__main__':
