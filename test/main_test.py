@@ -92,7 +92,9 @@ class MainTest(unittest.TestCase):
         self.assertEqual(game.player_one.player_cards_count(), 0)
 
     # Edge case, during war, the player who runs out of cards first should lose
-    def test_for_war_with_player_one_having_five_cards(self):
+    # In case of war, when player-2 has less than four cards, player-1 wins
+    # player-2 surrenders the hand to player-1
+    def test_for_war_when_player_two_has_less_than_four_cards(self):
         game = Main()
         game.create_players('Mike', 'Blake')
         game.deck = Deck()
@@ -107,6 +109,28 @@ class MainTest(unittest.TestCase):
         self.assertEqual(game.player_two.player_cards_count(), 3)
         game.start_game()
         self.assertEqual(game.winner.get_player_name(), 'Mike')
+        self.assertEqual(game.winner.player_cards_count(), 8)
+        self.assertEqual(game.player_two.player_cards_count(), 0)
+
+    #  In case of war, when player-1 has less than four cards, player-2 wins
+    # player-1 surrenders the hand to player-2
+    def test_for_war_when_player_one_has_less_than_four_cards(self):
+        game = Main()
+        game.create_players('Mike', 'Blake')
+        game.deck = Deck()
+        card_two = Card(SuitEnum.SPADES, CardEnum.TWO)
+        card_four = Card(SuitEnum.SPADES, CardEnum.FOUR)
+        card_ten = Card(SuitEnum.SPADES, CardEnum.TEN)
+        card_ace = Card(SuitEnum.SPADES, CardEnum.ACE)
+        card_jack = Card(SuitEnum.SPADES, CardEnum.JACK)
+        game.player_one.add_cards([card_two, card_ace, card_four])
+        game.player_two.add_cards([card_two, card_ace, card_four, card_jack, card_ten])
+        self.assertEqual(game.player_one.player_cards_count(), 3)
+        self.assertEqual(game.player_two.player_cards_count(), 5)
+        game.start_game()
+        self.assertEqual(game.winner.get_player_name(), 'Blake')
+        self.assertEqual(game.winner.player_cards_count(), 8)
+        self.assertEqual(game.player_one.player_cards_count(), 0)
 
 
 if __name__ == '__main__':

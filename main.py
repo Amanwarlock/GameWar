@@ -105,12 +105,18 @@ class Main:
             self.track_wars()
 
             if self.player_one.player_cards_count() < 4:
+                self.player_two.add_cards([player_one_card, player_two_card])
+                self.surrender_hand(self.player_one, self.player_two)
+                Notifier.notify_round_stats(self.player_two, self.player_one)
                 Notifier.notify_game_winner(self.TITLE_PLAYER_TWO, self.player_two)
                 self.winner = self.player_two
                 self.is_war = False
                 return False
 
             if self.player_two.player_cards_count() < 4:
+                self.player_one.add_cards([player_two_card, player_one_card])
+                self.surrender_hand(self.player_two, self.player_one)
+                Notifier.notify_round_stats(self.player_one, self.player_two)
                 Notifier.notify_game_winner(self.TITLE_PLAYER_ONE, self.player_one)
                 self.winner = self.player_one
                 self.is_war = False
@@ -155,6 +161,12 @@ class Main:
                 continue
 
         return True
+
+    def surrender_hand(self, from_player, to_player):
+        if from_player.player_cards_count() > 0:
+            cards = from_player.draw_many(from_player.player_cards_count())
+            to_player.add_cards(cards)
+        return self
 
 
 if __name__ == '__main__':

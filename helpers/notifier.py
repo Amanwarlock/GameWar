@@ -16,6 +16,10 @@ class Notifier:
     @staticmethod
     def notify_round_winner(title, round_count, winner, loser):
         Notifier.fire(f'\n {title}:{winner.get_player_name()} Won Round - {round_count}')
+        Notifier.notify_round_stats(winner, loser)
+
+    @staticmethod
+    def notify_round_stats(winner, loser):
         Notifier.fire(f'\n Round Stats:\t \t {winner.get_player_name()} Has {winner.player_cards_count()} cards '
                       f'\t | \t \t {loser.get_player_name()} Has {loser.player_cards_count()} cards \n')
 
